@@ -1,0 +1,69 @@
+#include <Servo.h>
+
+Servo myservo;
+
+int TrgPin = 7; // 设置超声波发送引脚
+int EcoPin = 6; // 设置超声波接收引脚
+int PWM1 = 3; // 设置舵机引脚
+
+float dist; 
+float dist2;
+
+Servo myservo2;
+
+int TrgPin2 = 9;
+int EcoPin2 = 8;
+int PWM2 = 4; // 设置舵机引脚
+
+int pos = 90;
+
+
+void setup() {
+myservo.attach(PWM1); //绑定舵机的引脚号
+myservo2.attach(PWM2);
+Serial.begin(9600); // 设置串口波特率
+pinMode(TrgPin, OUTPUT); // 设置引脚为输出模式
+pinMode(EcoPin, INPUT); // 设置引脚为接收模式
+pinMode(TrgPin2, OUTPUT);
+pinMode(EcoPin2, INPUT);
+}
+
+void loop() {
+digitalWrite(TrgPin, LOW); // 向超声波引脚输出低位电压0
+delayMicroseconds(8); // 等待8毫秒
+digitalWrite(TrgPin, HIGH); //向超声波引脚输出高位电压1
+delayMicroseconds(10); // 等待10毫秒
+digitalWrite(TrgPin, LOW); //向超声波引脚输出低位电压0
+dist = pulseIn(EcoPin, HIGH) / 58; // 读取接收超声波数据，并且将模拟信号换算成cm
+
+digitalWrite(TrgPin2, LOW); // 向超声波引脚输出低位电压0
+delayMicroseconds(8); // 等待8毫秒
+digitalWrite(TrgPin2, HIGH); //向超声波引脚输出高位电压1
+delayMicroseconds(10); // 等待10毫秒
+digitalWrite(TrgPin2, LOW); //向超声波引脚输出低位电压0
+dist = pulseIn(EcoPin2, HIGH) / 58; // 读取接收超声波数据，并且将模拟信号换算成cm
+
+Serial.print("Distance:"); // 向串口发送数据
+Serial.print(dist); // 向串口发送数据
+Serial.println("cm"); // 向串口发送数据
+
+Serial.print("Distance2:"); // 向串口发送数据
+Serial.print(dist2); // 向串口发送数据
+Serial.println("cm"); // 向串口发送数据
+
+delay(300); // 等待 800毫秒
+
+if (dist < 20) { // 判断距离是否小过10CM
+myservo.write(130);
+//myservo2.write(60); // 控制舵机旋转
+delay(20); // 等待 20毫秒
+
+}
+if (dist2 < 20) {
+myservo.write(50);
+//myservo2.write(20);// 控制舵机旋转
+delay(20);
+}
+
+}
+
