@@ -1,0 +1,86 @@
+#include <Servo.h>
+
+Servo myservo;
+
+int PWM1 = 3; // 设置舵机引脚
+
+Servo myservo2;
+
+int PWM2 = 4; // 设置舵机引脚
+
+int pos = 45;
+
+volatile float dist1;
+volatile float dist2;
+ 
+float checkdistance_7_6() {
+  digitalWrite(7, LOW);
+  delayMicroseconds(2);
+  digitalWrite(7, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(7, LOW);
+  float distance1 = pulseIn(6, HIGH) / 58.00;
+  delay(10);
+  return distance1;
+}
+ 
+float checkdistance_9_8() {
+  digitalWrite(9, LOW);
+  delayMicroseconds(2);
+  digitalWrite(9, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(9, LOW);
+  float distance2 = pulseIn(8, HIGH) / 58.00;
+  delay(10);
+  return distance2;
+}
+ void setup(){
+  Serial.begin(9600);
+  dist1 = 0;
+  dist2 = 0;
+  pinMode(7, OUTPUT);
+  pinMode(6, INPUT);
+  pinMode(9, OUTPUT);
+  pinMode(8, INPUT);
+  myservo.attach(PWM1); //绑定舵机的引脚号
+  myservo2.attach(PWM2);
+
+}
+ 
+void loop(){
+  dist1 = checkdistance_7_6();
+  dist2 = checkdistance_9_8();
+  Serial.println(dist1);
+  //Serial.println("-----");
+  Serial.println(dist2);
+  
+if (dist1 < 20) { // 判断距离是否小过10CM
+myservo.write(73);
+myservo2.write(0); // 控制舵机旋转
+//delay(100); // 等待 20毫秒
+
+}
+if (dist1 > 20) {
+  myservo.write(45);
+  myservo2.write(0);
+ // delay(100); 
+}
+if (dist2 < 20 ) {
+myservo.write(17);
+myservo2.write(0);// 控制舵机旋转
+//delay(100); 
+}
+// if (dist2 > 20) {
+//   myservo.write(90);
+// }
+if (dist1 > 500 || dist2 > 500) {
+  myservo.write(45);
+  myservo2.write(0);
+  //delay(100); 
+}
+ if (dist1 <20 && dist2 <20){
+   myservo.write(45);
+ myservo2.write(120);
+ //delay(100); 
+ }
+}
